@@ -1,0 +1,47 @@
+{% extends "base.html.twig" %}
+
+{% block title %}My reviews{% endblock %}
+
+{% block javascripts %}
+	<script>
+		$(document).ready(function() {
+			$("#homeBtn").on("click", function(){
+				window.location.href = '{{ url("dashboard_url") }}';
+			});
+		});
+	</script>
+{% endblock %}
+
+{% block body %}
+	<table class="table table-sm table-bordered">
+		<thead>
+			<td>ID</td>
+			<td>Title</td>
+			<td>Author</td>
+			<td>Download count</td>
+			<td>My vote</td>
+		</thead>
+		<tbody>
+			{% for review in reviews %}
+				<tr>
+					<td>{{ review.id }}</td>
+				</tr>
+				<tr>
+					<td>{{ review.title }}</td>
+				</tr>
+				<tr>
+					<td>{{ review.author }}</td>
+				</tr>
+				<tr>
+					<td>{{ review.download_count }}</td>
+				</tr>
+				<tr>
+					<td>{{ review.my_vote }} / 10</td>
+				</tr>
+				<tr>
+					<td><textarea>{{ data.my_review_description }}</textarea></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

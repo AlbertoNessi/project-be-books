@@ -1,0 +1,87 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Search books{% endblock %}
+
+{% block javascripts %}
+	<script>
+		$(document).ready(function() {
+
+			// GO TO MY REVIEWS...
+			$("#myReviewsBtn").on("click", function(){
+				window.location.href = '{{ url("myReviews_url") }}';
+			});
+
+			// SEARCH BOOKS...
+			$("#searchButton").on("click", function(){
+				$.ajax({
+					url: "https://gutendex.com/books?search=" + $("#searchInput").val() + "%20great",
+					type: 'GET',
+					success: function(response) {
+						console.log(response.results);
+						$("#bookListTableTBody").empty();
+
+						if(response.results.length === 0) {
+							$("#alertEmptyData").removeClass('d-none');
+							$("#bookListTable").addClass('d-none');
+							return;
+						}
+
+						$("#alertEmptyData").addClass('d-none');
+
+						let booksList = '';
+						$.each(response.results, function(key, value){
+							booksList += '<tr>';
+							booksList += "<td><p>" + value.id + "</p></td>";
+							booksList += "<td><p>" + value.title + "</p></td>";
+							booksList += "<td><p>" + value.authors[0].name + "</p></td>";
+							booksList += "<td><p>" + value.download_count + "</p></td>";
+							booksList += 
+								`<td>
+									<button class='btn btn-outline-success' class='reviewBtns' data-bookid='` + value.id + `'>Review</button>
+								</td>`;
+							booksList += '</tr>';
+						});
+
+						$("#bookListTableTBody").append(booksList);
+						$("#bookListTable").removeClass('d-none');
+					},
+					error: function() {
+						alert('An error occurred, retry!');
+					}
+				});
+			});
+		
+		})
+		
+	</script>
+{% endblock %}
+
+{% block body %}
+	<form id="searchBookForm">
+		<textarea class="form-control" id="searchInput" name="searchInput" placeholder="search author names and book titles..."></textarea>
+		<button type="button" class="btn btn-success" id="searchButton">Search</button>
+	</form>
+
+	<div class="alert alert-warning d-none" role="alert" id="alertEmptyData">No data for this search.</div>
+
+	<table class="table table-sm table-bordered d-none" id="bookListTable">
+		<thead>
+			<td>
+				<p>ID</p>
+			</td>
+			<td>
+				<p>Titolo</p>
+			</td>
+			<td>
+				<p>Autore</p>
+			</td>
+			<td>
+				<p>N. download</p>
+			</td>
+			<td>
+				<p></p>
+			</td>
+		</thead>
+		<tbody id="bookListTableTBody"></tbody>
+	</table>
+{% endblock %}
