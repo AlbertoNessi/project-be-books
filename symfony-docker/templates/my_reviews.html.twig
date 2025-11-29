@@ -8,6 +8,26 @@
 			$("#homeBtn").on("click", function(){
 				window.location.href = '{{ url("dashboard_url") }}';
 			});
+
+			$(".editReviewBtn").on("click", function(){
+				// Put inside the modal inputs the values of the selected row to update...
+				$.ajax({
+					url: $(this).data('url'),
+					type: 'GET',
+					success: function(response) {
+						$("#bookTitle").text(response.book_title);
+						$("#vote").val(response.review_vote);
+						$('#voteValue').text(response.review_vote);
+						$("#reviewDescription").val(response.review_description);
+
+						// Open the review modal...
+						$("#reviewBookModal").modal("show");
+					},
+					error: function(response) {
+						alert("An error occurred");
+					}
+				});
+			});
 		});
 	</script>
 {% endblock %}
@@ -20,6 +40,8 @@
             <th class="text-nowrap">Title</th>
             <th class="text-nowrap">Vote / 5</th>
 			<th class="text-nowrap">Review description</td>
+			<th></th>
+			<th></th>
 		</thead>
 		<tbody>
 			{% for review in data.reviews %}
@@ -29,6 +51,16 @@
 					<td>{{ review.getBookTitle() }}</td>
 					<td>{{ review.getReviewVote() }}</td>
 					<td>{{ review.getReviewDescription() }}</td>
+					<td>
+						<button 
+							class="btn btn-outline-primary editReviewBtn"
+							data-reviewid="{{ review.getId() }}"
+							data-url="{{ path('getReviewById_url', {'reviewId': review.getId()}) }}"
+						>Edit</button>
+					</td>
+					<td>
+						<button class="btn btn-outline-danger deleteReviewBtn" data-reviewid="{{ review.getId() }}">Delete</button>
+					</td>
 				</tr>
 			{% endfor %}
 		</tbody>

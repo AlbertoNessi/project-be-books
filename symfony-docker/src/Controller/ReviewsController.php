@@ -59,4 +59,29 @@ class ReviewsController extends AbstractController
 			return new JsonResponse($ex->getMessage(), $ex->getTraceAsString());
 		}
 	}
+
+	#[Route('/review/{reviewId}', name: 'getReviewById_url', methods:['GET'])]
+	public function getReviewById(Request $request, $reviewId) {
+		$parameters = $request->request->all();
+
+		if(!$reviewId) {
+			return new JsonResponse("No review id given");
+		}
+
+		try {
+			$review = $this->entityManager->getRepository(UserReviews::class)->find($reviewId);
+			$reviewData = [];
+			if($review) {
+				$reviewData = [
+					'book_title' => $review->getBookTitle(),
+					'review_vote' => $review->getReviewVote(),
+					'review_description' => $review->getReviewDescription()
+				];
+			}
+	
+			return new JsonResponse($reviewData);
+		} catch (Exception $ex) {
+			return new JsonResponse($ex->getMessage(), $ex->getTraceAsString());
+		}
+	}
 }

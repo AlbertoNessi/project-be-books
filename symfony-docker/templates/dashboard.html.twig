@@ -20,7 +20,8 @@
 				$("#vote").val('');
 				$("#reviewDescription").val('');
 				$("#bookId").val('');
-				$("#bookTitle").val('');
+				$("#bookTitle").text('');
+				$("#bookTitleHidden").val('');
 
 				console.log('Done.');
 			});
@@ -59,7 +60,7 @@
 									<button 
 										class='btn btn-outline-success reviewBtns' 
 										data-bookid='` + value.id + `'
-										data-booktitle='` + value.title + `'
+										data-book-title-hidden='` + value.title + `'
 									>Review</button>
 								</td>`;
 							booksList += '</tr>';
@@ -87,21 +88,18 @@
 							});
 
 							$("#bookId").val($(this).data('bookid'));
-							$("#bookTitle").val($(this).data('booktitle'));
+							$("#bookTitleHidden").val($(this).data('book-title-hidden'));
+							$("#bookTitle").text($(this).data('book-title-hidden'));
 							$("#reviewBookModal").modal("show");
 						});
 
 						$("#submitReviewBtn").on("click", function(){
-							console.log("submitReviewBtn on click");
-							console.log("Serialize form:");
-							console.log($("#formReview").serialize());
-							
 							$.ajax({
 								url: '{{ url("postReview_url")  }}',
 								method: 'POST',
 								data: {
 									book_id: $("#bookId").val(),
-									book_title: $("#bookTitle").val(),
+									book_title: $("#bookTitleHidden").val(),
 									vote: $("#vote").val(),
 									review_vote: $("#voteValue").val(),
 									review_description: $("#reviewDescription").val(),
