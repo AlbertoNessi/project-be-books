@@ -1,0 +1,27 @@
+<div class="modal" tabindex="-1" id="reviewBookModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Review</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Insert Book title</p>
+				<form id="formReview">
+					<label for="vote" class="form-label">Vote</label>
+					<input type="range" class="form-range" min="1" max="5" id="vote" name="vote">
+					<output for="vote" name="voteValue" id="voteValue" aria-hidden="true"></output>
+					
+					<div class="form-floating">
+						<textarea class="form-control" placeholder="Leave a review here" id="reviewDescription" name="reviewDescription" style="height: 100px"></textarea>
+						<label for="reviewDescription">Review description</label>
+					  </div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" id="submitReviewBtn">Save review</button>
+			</div>
+		</div>
+	</div>
+  </div>

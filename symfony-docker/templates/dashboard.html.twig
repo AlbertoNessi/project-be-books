@@ -11,15 +11,16 @@
 				window.location.href = '{{ url("myReviews_url") }}';
 			});
 
+			
 			// SEARCH BOOKS...
 			$("#searchButton").on("click", function(){
 				$.ajax({
 					url: "https://gutendex.com/books?search=" + $("#searchInput").val() + "%20great",
 					type: 'GET',
 					success: function(response) {
-						console.log(response.results);
 						$("#bookListTableTBody").empty();
 
+						// Check empty response
 						if(response.results.length === 0) {
 							$("#alertEmptyData").removeClass('d-none');
 							$("#bookListTable").addClass('d-none');
@@ -28,6 +29,8 @@
 
 						$("#alertEmptyData").addClass('d-none');
 
+						
+						// Append results to table
 						let booksList = '';
 						$.each(response.results, function(key, value){
 							booksList += '<tr>';
@@ -37,13 +40,61 @@
 							booksList += "<td><p>" + value.download_count + "</p></td>";
 							booksList += 
 								`<td>
-									<button class='btn btn-outline-success' class='reviewBtns' data-bookid='` + value.id + `'>Review</button>
+									<button class='btn btn-outline-success reviewBtns' data-bookid='` + value.id + `'>Review</button>
 								</td>`;
 							booksList += '</tr>';
 						});
 
 						$("#bookListTableTBody").append(booksList);
 						$("#bookListTable").removeClass('d-none');
+
+
+						// Review modal
+						$(".reviewBtns").on("click", function(){
+							let bookId = $(this).data('bookid');
+			
+							console.log("bookId");
+							console.log(bookId);
+
+							// Show selected vote to the user for better UI
+							const $rangeInput = $('#vote');
+							const $rangeOutput = $('#voteValue');
+
+							// Set initial value
+							$rangeOutput.text($rangeInput.val());
+
+							// Update on input (while dragging)
+							$rangeInput.on('input', function() {
+								$rangeOutput.text($(this).val());
+							});
+			
+							$("#reviewBookModal").modal("show");
+						});
+
+						$("#submitReviewBtn").on("click", function(){
+							console.log("submitReviewBtn on click");
+							console.log("Serialize form:");
+							console.log($("#formReview").serialize());
+							
+							$.ajax({
+								url: '{{ url("postReview_url")  }}',
+								type: 'POST',
+								data: $("#formReview").serialize(),
+								success: function(response){
+									console.log(response);
+									alert('Review sent successfully.');
+								},
+								error: function(){
+									alert('An error occurred, retry!');			
+								},
+								complete: function(){
+									$("#reviewBookModal").modal("hide");
+								}
+							});
+
+
+						});
+			
 					},
 					error: function() {
 						alert('An error occurred, retry!');
