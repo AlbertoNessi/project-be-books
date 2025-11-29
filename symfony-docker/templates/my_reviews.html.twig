@@ -13,33 +13,22 @@
 {% endblock %}
 
 {% block body %}
-	<table class="table table-sm table-bordered">
+	<table class="table table-bordered">
 		<thead>
-			<td>ID</td>
-			<td>Title</td>
-			<td>Author</td>
-			<td>Download count</td>
-			<td>My vote</td>
+			<th class="text-nowrap">Review ID</th>
+            <th class="text-nowrap">Book ID</th>
+            <th class="text-nowrap">Title</th>
+            <th class="text-nowrap">Vote / 5</th>
+			<th class="text-nowrap">Review description</td>
 		</thead>
 		<tbody>
 			{% for review in data.reviews %}
 				<tr>
-					<td>{{ review.id }}</td>
-				</tr>
-				<tr>
-					<td>{{ review.title }}</td>
-				</tr>
-				<tr>
-					<td>{{ review.author }}</td>
-				</tr>
-				<tr>
-					<td>{{ review.download_count }}</td>
-				</tr>
-				<tr>
-					<td>{{ review.my_vote }} / 10</td>
-				</tr>
-				<tr>
-					<td><textarea>{{ data.my_review_description }}</textarea></td>
+					<td>{{ review.getId() }}</td>
+					<td>{{ review.getBookId() }}</td>
+					<td>{{ review.getBookTitle() }}</td>
+					<td>{{ review.getReviewVote() }}</td>
+					<td>{{ review.getReviewDescription() }}</td>
 				</tr>
 			{% endfor %}
 		</tbody>
