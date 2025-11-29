@@ -18,9 +18,27 @@
 		<div class="container">
 			<h1>Book review app</h1>
 			<small>By Alberto Nessi</small>
+			
+			<div class="row justify-content-between mb-4 mt-4">
+				<div class="col-6">
+					{% if data.currentPage == 'home' %}
+						<button class="btn btn-primary" id="homeBtn">Home</button>
+					{% else %}
+						<button class="btn btn-outline-primary" id="homeBtn">Home</button>
+					{% endif %}
+				</div>
+				<div class="col-6 text-end">
 
-			<button class="btn btn-primary" id="myReviewsBtn">My reviews</button>
-			<button class="btn btn-outline-primary" id="homeBtn">Home</button>
+					{% if data.currentPage == 'home' %}
+						<button class="btn btn-outline-primary" id="myReviewsBtn">My reviews</button>
+					{% else %}
+						<button class="btn btn-primary" id="myReviewsBtn">My reviews</button>
+					{% endif %}
+
+					
+				</div>
+			</div>
+			
         	{% block body %}{% endblock %}
 		</div>
 

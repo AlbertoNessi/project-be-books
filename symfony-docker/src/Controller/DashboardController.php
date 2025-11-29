@@ -13,7 +13,9 @@ class DashboardController extends AbstractController
 	#[Route('/dashboard', name: 'dashboard_url')]
 	public function dashboard() {
 		return $this->render('dashboard.html.twig', [
-            'data' => [],
+            'data' => [
+				'currentPage' => 'home'
+			],
         ]);
 	}
 }

@@ -2,6 +2,7 @@
 services:
   php:
     image: ${IMAGES_PREFIX:-}app-php
+    platform: linux/amd64
     restart: unless-stopped
     environment:
       SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
@@ -9,7 +10,7 @@ services:
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       # Run "composer require symfony/orm-pack" to install and configure Doctrine ORM
-      DATABASE_URL: mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-!ChangeMe!}@database:3306/${MYSQL_DATABASE:-app}?serverVersion=${MYSQL_VERSION:-8}&charset=${MYSQL_CHARSET:-utf8mb4}
+      DATABASE_URL: mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-root_psw}@database:3306/${MYSQL_DATABASE:-app}?serverVersion=${MYSQL_VERSION:-8}&charset=${MYSQL_CHARSET:-utf8mb4}
       # Run "composer require symfony/mercure-bundle" to install and configure the Mercure integration
       MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
       MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}:${HTTPS_PORT:-443}/.well-known/mercure}
@@ -33,6 +34,8 @@ services:
         target: 443
         published: ${HTTP3_PORT:-443}
         protocol: udp
+    networks:
+      - backend
 
 # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
 ###> symfony/mercure-bundle ###
@@ -41,11 +44,12 @@ services:
 ###> doctrine/doctrine-bundle ###
   database:
     image: mysql:${MYSQL_VERSION:-8}
+    platform: linux/amd64
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-app}  
       # You should definitely change the password in production
-      MYSQL_RANDOM_ROOT_PASSWORD: "true"
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-!ChangeMe!}
+      MYSQL_RANDOM_ROOT_PASSWORD: "false"
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-root_psw}
       MYSQL_USER: ${MYSQL_USER:-app}
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
@@ -54,9 +58,29 @@ services:
       start_period: 60s
     volumes:
       - database_data:/var/lib/mysql:rw
+    ports:
+      - "3306:3306"
+    networks:
+      - backend
       # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
       # - ./docker/db/data:/var/lib/mysql:rw
 ###< doctrine/doctrine-bundle ###
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    platform: linux/amd64
+    depends_on:
+      - database
+    environment:
+      PMA_HOST: database            # name of the MySQL service
+      PMA_PORT: 3306
+      # optionally, you can set default user/password if you like:
+      PMA_USER: ${MYSQL_USER:-app}
+      PMA_PASSWORD: ${MYSQL_PASSWORD:-root_psw}
+    ports:
+      - "8080:80"                   # map host port 8080 → container port 80
+    networks:
+      - backend
 
 volumes:
   caddy_data:
@@ -67,3 +91,6 @@ volumes:
 ###> doctrine/doctrine-bundle ###
   database_data:
 ###< doctrine/doctrine-bundle ###
+
+networks:
+  backend:
