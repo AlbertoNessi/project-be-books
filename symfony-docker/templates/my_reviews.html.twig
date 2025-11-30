@@ -10,11 +10,16 @@
 			});
 
 			$(".editReviewBtn").on("click", function(){
+				let currentReviewBtn = $(this);
 				// Put inside the modal inputs the values of the selected row to update...
 				$.ajax({
-					url: $(this).data('url'),
+					url: $(this).data('geturl'),
 					type: 'GET',
+					data: {
+						id: $("#reviewId").val(),
+					},
 					success: function(response) {
+						$("#reviewId").val($(this).data('id'));
 						$("#bookTitle").text(response.book_title);
 						$("#vote").val(response.review_vote);
 						$('#voteValue').text(response.review_vote);
@@ -22,9 +27,57 @@
 
 						// Open the review modal...
 						$("#reviewBookModal").modal("show");
+
+						// Update the review...
+						$("#submitReviewBtn").on("click", function(){
+							$.ajax({
+								url: currentReviewBtn.data('puturl'),
+								method: 'PUT',
+								data: {
+									reviewId: $("#reviewId").val(),
+									vote: $("#vote").val(),
+									review_description: $("#reviewDescription").val(),
+								},
+								dataType: 'json',
+								success: function(putResponse){
+									console.log(putResponse);
+
+									$('#voteValue').text(putResponse.review_vote);
+									$("#reviewDescription").val(putResponse.review_description);
+
+									$("#reviewBookModal").modal("hide");
+									window.location.reload();
+								},
+								error: function(jqXHR, textStatus, errorThrown) {
+									console.log("Status code:", jqXHR.status);
+									console.log("Status text:", jqXHR.statusText);
+									console.log("Response body:", jqXHR.responseText);
+									console.log("Error type:", textStatus);
+									console.log("Exception message:", errorThrown);
+
+									$("#reviewBookModal").modal("hide");
+								},
+							});
+						});
 					},
 					error: function(response) {
 						alert("An error occurred");
+					}
+				});
+			});
+
+			$(".deleteReviewBtn").on("click", function(){
+				let currentReviewBtn = $(this);
+				// Put inside the modal inputs the values of the selected row to update...
+				
+				$.ajax({
+					url: $(this).data('deleteurl'),
+					type: 'DELETE',
+					data: {
+						id: $("#reviewId").val(),
+					},
+					success: function(response) {
+						window.location.reload();
 					}
 				});
 			});
@@ -55,11 +108,16 @@
 						<button 
 							class="btn btn-outline-primary editReviewBtn"
 							data-reviewid="{{ review.getId() }}"
-							data-url="{{ path('getReviewById_url', {'reviewId': review.getId()}) }}"
+							data-geturl="{{ path('handleReview_url', {'id': review.getId()}) }}"
+							data-puturl="{{ path('handleReview_url', {'id': review.getId()}) }}"
 						>Edit</button>
 					</td>
 					<td>
-						<button class="btn btn-outline-danger deleteReviewBtn" data-reviewid="{{ review.getId() }}">Delete</button>
+						<button 
+							class="btn btn-outline-danger deleteReviewBtn" 
+							data-reviewid="{{ review.getId() }}"
+							data-deleteurl="{{ path('handleReview_url', {'id': review.getId()}) }}"
+						>Delete</button>
 					</td>
 				</tr>
 			{% endfor %}

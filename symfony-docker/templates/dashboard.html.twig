@@ -5,7 +5,6 @@
 {% block javascripts %}
 	<script>
 		$(document).ready(function() {
-
 			// GO TO MY REVIEWS...
 			$("#myReviewsBtn").on("click", function(){
 				window.location.href = '{{ url("myReviews_url") }}';
@@ -14,16 +13,13 @@
 
 			// Reset all fields inside the modal when the user closes it...
 			$("#reviewBookModal").on("hidden.bs.modal", function(){
-				console.log('resetting modal...');
-				
+				$("#reviewId").val('');
 				$("#voteValue").val('');
 				$("#vote").val('');
 				$("#reviewDescription").val('');
 				$("#bookId").val('');
 				$("#bookTitle").text('');
 				$("#bookTitleHidden").val('');
-
-				console.log('Done.');
 			});
 			
 			// SEARCH BOOKS...
@@ -94,8 +90,15 @@
 						});
 
 						$("#submitReviewBtn").on("click", function(){
+							let url = '{{ path("handleReview_url") }}';
+							if($("#reviewId").val()) {
+								let reviewId = $("#reviewId").val();
+								let urlTemplate = '{{ path("handleReview_url", {"id": "__ID__"}) }}';
+								url = urlTemplate.replace('__ID__', encodeURIComponent(reviewId));
+							}
+
 							$.ajax({
-								url: '{{ url("postReview_url")  }}',
+								url: url,
 								method: 'POST',
 								data: {
 									book_id: $("#bookId").val(),
