@@ -3,6 +3,9 @@
 ## Framework + stack
 Symfony + mysql
 
+## How to run:
+
+
 ## Logic
 The UI presents itself at first with a search bar in which the user can search for books.
 The search calls the endpoiint on gutendex.com '/book/search' that returns a list of books.
