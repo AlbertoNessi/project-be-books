@@ -14,8 +14,8 @@
 			// Reset all fields inside the modal when the user closes it...
 			$("#reviewBookModal").on("hidden.bs.modal", function(){
 				$("#reviewId").val('');
-				$("#voteValue").val('');
-				$("#vote").val('');
+				$("#scoreValue").val('');
+				$("#score").val('');
 				$("#reviewDescription").val('');
 				$("#bookId").val('');
 				$("#bookTitle").text('');
@@ -71,9 +71,9 @@
 
 						// Review modal
 						$(".reviewBtns").on("click", function(){
-							// Show selected vote to the user for better UI
-							const $rangeInput = $('#vote');
-							const $rangeOutput = $('#voteValue');
+							// Show selected score to the user for better UI
+							const $rangeInput = $('#score');
+							const $rangeOutput = $('#scoreValue');
 
 							// Set initial value
 							$rangeOutput.text($rangeInput.val());
@@ -86,6 +86,8 @@
 							$("#bookId").val($(this).data('bookid'));
 							$("#bookTitleHidden").val($(this).data('book-title-hidden'));
 							$("#bookTitle").text($(this).data('book-title-hidden'));
+							
+							// Open review modal...
 							$("#reviewBookModal").modal("show");
 						});
 
@@ -103,8 +105,8 @@
 								data: {
 									book_id: $("#bookId").val(),
 									book_title: $("#bookTitleHidden").val(),
-									vote: $("#vote").val(),
-									review_vote: $("#voteValue").val(),
+									score: $("#score").val(),
+									review_score: $("#scoreValue").val(),
 									review_description: $("#reviewDescription").val(),
 								},
 								dataType: 'json',

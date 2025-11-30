@@ -21,9 +21,26 @@
 					success: function(response) {
 						$("#reviewId").val($(this).data('id'));
 						$("#bookTitle").text(response.book_title);
-						$("#vote").val(response.review_vote);
-						$('#voteValue').text(response.review_vote);
+						$("#score").val(response.review_score);
+						$('#scoreValue').text(response.review_score);
 						$("#reviewDescription").val(response.review_description);
+
+
+						// Show selected score to the user for better UI
+						const $rangeInput = $('#score');
+						const $rangeOutput = $('#scoreValue');
+
+						// Set initial value
+						$rangeOutput.text($rangeInput.val());
+
+						// Update on input (while dragging)
+						$rangeInput.on('input', function() {
+							$rangeOutput.text($(this).val());
+						});
+
+						$("#bookId").val($(this).data('bookid'));
+						$("#bookTitleHidden").val($(this).data('book-title-hidden'));
+						$("#bookTitle").text($(this).data('book-title-hidden'));
 
 						// Open the review modal...
 						$("#reviewBookModal").modal("show");
@@ -35,14 +52,14 @@
 								method: 'PUT',
 								data: {
 									reviewId: $("#reviewId").val(),
-									vote: $("#vote").val(),
+									score: $("#score").val(),
 									review_description: $("#reviewDescription").val(),
 								},
 								dataType: 'json',
 								success: function(putResponse){
 									console.log(putResponse);
 
-									$('#voteValue').text(putResponse.review_vote);
+									$('#scoreValue').text(putResponse.review_score);
 									$("#reviewDescription").val(putResponse.review_description);
 
 									$("#reviewBookModal").modal("hide");

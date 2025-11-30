@@ -55,20 +55,20 @@ class ReviewsController extends AbstractController
 				$newReview->setBookId($parameters['book_id']);
 				$newReview->setBookTitle($parameters['book_title']);
 				$newReview->setReviewDescription($parameters['review_description']);
-				$newReview->setReviewVote($parameters['vote']);
+				$newReview->setReviewVote($parameters['score']);
 	
 				$this->entityManager->persist($newReview);
 				$this->entityManager->flush();
 	
 				return new JsonResponse([
 					'new_review_id' => $newReview->getId(),
-					'new_review_vote' => $newReview->getReviewVote()
+					'new_review_score' => $newReview->getReviewVote()
 				]);
 			} elseif ($request->isMethod('GET')) {	
 				if($review) {
 					$reviewData = [
 						'book_title' => $review->getBookTitle(),
-						'review_vote' => $review->getReviewVote(),
+						'review_score' => $review->getReviewVote(),
 						'review_description' => $review->getReviewDescription()
 					];
 				}
@@ -79,7 +79,7 @@ class ReviewsController extends AbstractController
 					throw new Exception("Review not found with id: $id", Response::HTTP_NOT_FOUND);
 				}
 				
-				$review->setReviewVote($parameters['vote']);
+				$review->setReviewVote($parameters['score']);
 				$review->setReviewDescription($parameters['review_description']);
 
 				$this->entityManager->persist($review);
@@ -87,7 +87,7 @@ class ReviewsController extends AbstractController
 	
 				return new JsonResponse([
 					'new_review_id' => $review->getId(),
-					'new_review_vote' => $review->getReviewVote(),
+					'new_review_score' => $review->getReviewVote(),
 					'new_review_description' => $review->getReviewDescription()
 				]);
 
